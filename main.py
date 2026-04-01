@@ -120,7 +120,7 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
                 score = fitness 
                 position = positions[i, :].copy()
                 
-        Fc = 2 - l * (2 / max_iterations) 
+        Fc = 2 * (1 - np.sin((np.pi / 2) * (l / max_iterations)))
         
         for i in range(search_agents):
             for j in range(dimension):     
