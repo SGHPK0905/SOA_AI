@@ -9,10 +9,23 @@ def F1(x):
     """Hàm mục tiêu F1 (Sphere Function - Hàm đơn mode, hình cái bát)"""
     return np.sum(x**2)
 
+def F2(x):
+    """Hàm mục tiêu F2 (Schwefel 2.22 - Đơn mode)"""
+    return np.sum(np.abs(x)) + np.prod(np.abs(x))
+
 def F9(x):
     """Hàm mục tiêu F9 (Rastrigin Function - Hàm đa mode, rất nhiều bẫy)"""
     dimension = len(x)
     return np.sum(x**2 - 10 * np.cos(2 * np.pi * x)) + 10 * dimension
+
+def F10(x):
+    """Hàm mục tiêu F10 (Ackley - Đa mode, cực kỳ nhiều bẫy gai góc)"""
+    dim = len(x)
+    sum1 = np.sum(x**2)
+    sum2 = np.sum(np.cos(2 * np.pi * x))
+    term1 = -20 * np.exp(-0.2 * np.sqrt(sum1 / dim))
+    term2 = -np.exp(sum2 / dim)
+    return term1 + term2 + 20 + np.e
 
 def fun_info(F):
     if F == 'F1':
@@ -21,6 +34,13 @@ def fun_info(F):
         dimension = 30
         fitness = F1
         return lowerbound, upperbound, dimension, fitness
+    
+    elif F == 'F2':
+        lowerbound = -10
+        upperbound = 10
+        dimension = 30
+        fitness = F2
+        return lowerbound, upperbound, dimension, fitness
         
     elif F == 'F9':
         lowerbound = -5.12
@@ -28,7 +48,14 @@ def fun_info(F):
         dimension = 30
         fitness = F9
         return lowerbound, upperbound, dimension, fitness
-        
+    
+    elif F == 'F10':
+        lowerbound = -32.768
+        upperbound = 32.768
+        dimension = 30
+        fitness = F10
+        return lowerbound, upperbound, dimension, fitness
+    
     else:
         print(f"Lỗi: Chưa định nghĩa hàm {F} trong hệ thống!")
         return None, None, None, None
@@ -188,7 +215,7 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
 # ==========================================
 if __name__ == "__main__":
     search_agents = 30 
-    fun_name = 'F9'  
+    fun_name = 'F10'  
     max_iterations = 1000 
     
     lowerbound, upperbound, dimension, fitness = fun_info(fun_name)
@@ -211,12 +238,16 @@ if __name__ == "__main__":
     x = np.linspace(lowerbound, upperbound, 50)
     y = np.linspace(lowerbound, upperbound, 50)
     X, Y = np.meshgrid(x, y)
-    Z = X**2 + Y**2 
+    Z = np.zeros_like(X)
+    for i in range(X.shape[0]):
+        for j in range(X.shape[1]):
+            Z[i, j] = fitness(np.array([X[i, j], Y[i, j]])) 
+
     ax1.plot_surface(X, Y, Z, cmap='viridis', edgecolor='none', alpha=0.8)
-    ax1.set_title('Objective space (F1 Function)')
+    ax1.set_title(f'Objective space ({fun_name} Function)')
     ax1.set_xlabel('x_1')
     ax1.set_ylabel('x_2')
-    ax1.set_zlabel('F1(x_1, x_2)')
+    ax1.set_zlabel(f'{fun_name}(x_1, x_2)')
 
     # Vẽ cả 2 đường cong trên cùng 1 biểu đồ
     ax2 = fig.add_subplot(1, 2, 2)
