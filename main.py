@@ -216,7 +216,7 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
 # ==========================================
 if __name__ == "__main__":
     search_agents = 30 
-    fun_name = 'F10'  
+    fun_name = 'F9'  
     max_iterations = 1000 
     
     lowerbound, upperbound, dimension, fitness = fun_info(fun_name)
