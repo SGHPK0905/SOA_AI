@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import math
+import os
 
 # ==========================================
 # ==========================================
@@ -261,4 +262,11 @@ if __name__ == "__main__":
     ax2.legend()
 
     plt.tight_layout()
+    
+    import os
+    os.makedirs('Output', exist_ok=True)
+    image_path = f'Output/Convergence_Curve_{fun_name}.png'
+    plt.savefig(image_path, dpi=300, bbox_inches='tight')
+    print(f"\n📸 Đã lưu biểu đồ thành công tại: {image_path}")
+    
     plt.show()
