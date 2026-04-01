@@ -1,12 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import math
 
 # ==========================================
 # ==========================================
 def F1(x):
-    """Hàm mục tiêu F1 (Sphere Function)"""
+    """Hàm mục tiêu F1 (Sphere Function - Hàm đơn mode, hình cái bát)"""
     return np.sum(x**2)
+
+def F9(x):
+    """Hàm mục tiêu F9 (Rastrigin Function - Hàm đa mode, rất nhiều bẫy)"""
+    dimension = len(x)
+    return np.sum(x**2 - 10 * np.cos(2 * np.pi * x)) + 10 * dimension
 
 def fun_info(F):
     if F == 'F1':
@@ -15,7 +21,17 @@ def fun_info(F):
         dimension = 30
         fitness = F1
         return lowerbound, upperbound, dimension, fitness
-
+        
+    elif F == 'F9':
+        lowerbound = -5.12
+        upperbound = 5.12
+        dimension = 30
+        fitness = F9
+        return lowerbound, upperbound, dimension, fitness
+        
+    else:
+        print(f"Lỗi: Chưa định nghĩa hàm {F} trong hệ thống!")
+        return None, None, None, None
 
 # ==========================================
 # ==========================================
@@ -49,6 +65,19 @@ def chaotic_init(search_agents, dimension, upper_bound, lower_bound):
             positions[:, i] = lower_bound[i] + x[:, i] * (upper_bound[i] - lower_bound[i])
             
     return positions
+
+# ==========================================
+# HÀM BƯỚC NHẢY LEVY (CHIẾN LƯỢC 3)
+# ==========================================
+def levy_flight(dim):
+    """Tạo ra một bước nhảy đột biến dựa trên phân phối Levy"""
+    beta = 1.5
+    sigma = (math.gamma(1 + beta) * math.sin(math.pi * beta / 2) / 
+             (math.gamma((1 + beta) / 2) * beta * 2**((beta - 1) / 2)))**(1 / beta)
+    u = np.random.randn(dim) * sigma
+    v = np.random.randn(dim)
+    step = u / np.abs(v)**(1 / beta)
+    return step
 
 # ==========================================
 # ==========================================
@@ -107,6 +136,7 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
     position = np.zeros(dimension)
     score = float('inf') 
     
+    # 1. Khởi tạo Hỗn mang (Chiến lược 1 - Đã chuẩn)
     positions = chaotic_init(search_agents, dimension, upper_bound, lower_bound)
     convergence = np.zeros(max_iterations)
     
@@ -120,7 +150,8 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
                 score = fitness 
                 position = positions[i, :].copy()
                 
-        Fc = 2 * (1 - np.sin((np.pi / 2) * (l / max_iterations)))
+        # 2. Chiến lược 2: Fc GIẢM MẠNH (Hàm bậc 2)
+        Fc = 2 * (1 - l / max_iterations)**2 
         
         for i in range(search_agents):
             for j in range(dimension):     
@@ -137,6 +168,17 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
                 
                 positions[i, j] = X1
                 
+            # 3. Chiến lược 3: LEVY FLIGHT CÓ KHÓA AN TOÀN
+            if np.random.rand() < 0.2:
+                decay = (1 - l / max_iterations)**2
+                step = 0.01 * levy_flight(dimension) * decay
+                
+                new_pos = positions[i, :] + step
+                new_pos = np.clip(new_pos, lower_bound, upper_bound)
+                
+                if objective(new_pos) < objective(positions[i, :]):
+                    positions[i, :] = new_pos
+                        
         convergence[l] = score
         l += 1    
         
@@ -146,7 +188,7 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
 # ==========================================
 if __name__ == "__main__":
     search_agents = 30 
-    fun_name = 'F1'  
+    fun_name = 'F9'  
     max_iterations = 1000 
     
     lowerbound, upperbound, dimension, fitness = fun_info(fun_name)
@@ -183,7 +225,7 @@ if __name__ == "__main__":
     ax2.set_title('Convergence Curve Comparison')
     ax2.set_xlabel('Iterations (Vòng lặp)')
     ax2.set_ylabel('Best score (Giá trị tốt nhất)')
-    ax2.set_yscale('log') # Dùng thang đo logarit để thấy rõ sự khác biệt ở các số thập phân siêu nhỏ
+    ax2.set_yscale('log')
     ax2.grid(True, which="both", ls="--")
     ax2.legend()
 
