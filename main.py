@@ -141,7 +141,6 @@ def soa(search_agents, max_iterations, lower_bound, upper_bound, dimension, obje
                 
                 # Quá trình Di cư (Khám phá)
                 A1 = 2 * Fc * r1 - Fc 
-                C1 = 2 * r2 
                 b = 1             
                 
                 # Quá trình Tấn công (Khai thác theo hình xoắn ốc)
@@ -187,7 +186,6 @@ def misoa(search_agents, max_iterations, lower_bound, upper_bound, dimension, ob
                 r2 = np.random.rand() 
                 
                 A1 = 2 * Fc * r1 - Fc 
-                C1 = 2 * r2 
                 b = 1             
                 
                 ll = (Fc - 1) * np.random.rand() + 1  
