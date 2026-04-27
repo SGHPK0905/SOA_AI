@@ -269,66 +269,66 @@ if st.sidebar.button("🚀 Bắt đầu Tối Ưu Hóa", type="primary"):
             st.warning(f"⚠️ **Kết luận:** Về mặt tổng thể, **SOA** đang cho kết quả trung bình tốt hơn MISOA trong bài toán TSP tổ hợp này.")
             st.caption("*(Giải thích: Trong một số không gian rời rạc, cơ chế đột biến Levy Flight của MISOA có thể vô tình phá vỡ cấu trúc chuỗi tối ưu (ROV) khiến kết quả trung bình kém hơn thuật toán gốc).*")
         st.markdown("---")
-    st.markdown("### 📊 Trực quan hóa kết quả thống kê")
+        st.markdown("### 📊 Trực quan hóa kết quả thống kê")
 
-    col_bar, col_box = st.columns(2)
+        col_bar, col_box = st.columns(2)
 
-    with col_bar:
-        st.markdown("#### 1. Lịch sử các lần chạy")
-        st.caption("Biểu đồ so sánh quãng đường của từng lần chạy độc lập")
-        
-        fig_bar, ax_bar = plt.subplots(figsize=(6, 4))
-        x = np.arange(num_runs)
-        width = 0.35
-        
-        ax_bar.bar(x - width/2, results_soa, width, label='SOA Gốc', color='#FF4B4B', alpha=0.8)
-        ax_bar.bar(x + width/2, results_misoa, width, label='MISOA', color='#4682B4', alpha=0.9)
-        
-        ax_bar.set_xlabel("Lần chạy thứ")
-        ax_bar.set_ylabel("Tổng quãng đường (km)")
-        
-        if num_runs <= 20:
-            ax_bar.set_xticks(x)
-            ax_bar.set_xticklabels([f"{i+1}" for i in range(num_runs)])
-        else:
-            ax_bar.set_xticks([])
-        ax_bar.legend()
-        ax_bar.grid(True, linestyle='--', alpha=0.3)
-        
-        ax_bar.tick_params(colors='#555555')
-        for spine in ax_bar.spines.values():
-            spine.set_color('#CCCCCC')
+        with col_bar:
+            st.markdown("#### 1. Lịch sử các lần chạy")
+            st.caption("Biểu đồ so sánh quãng đường của từng lần chạy độc lập")
             
-        st.pyplot(fig_bar)
-        
-    with col_box:
-        st.markdown("#### 2. Biểu đồ phân phối (Boxplot)")
-        st.caption("Đánh giá độ ổn định (Hộp càng hẹp, dữ liệu càng ổn định)")
-        
-        fig_box, ax_box = plt.subplots(figsize=(6, 4))
-        
-        bplot = ax_box.boxplot([results_soa, results_misoa], 
-                                labels=['SOA Gốc', 'MISOA'], 
-                                patch_artist=True,
-                                widths=0.5)
-        
-        colors = ['#FF4B4B', '#4682B4']
-        for patch, color in zip(bplot['boxes'], colors):
-            patch.set_facecolor(color)
-            patch.set_alpha(0.7)
+            fig_bar, ax_bar = plt.subplots(figsize=(6, 4))
+            x = np.arange(num_runs)
+            width = 0.35
             
-        for median in bplot['medians']:
-            median.set_color('black')
-            median.set_linewidth(2)
+            ax_bar.bar(x - width/2, results_soa, width, label='SOA Gốc', color='#FF4B4B', alpha=0.8)
+            ax_bar.bar(x + width/2, results_misoa, width, label='MISOA', color='#4682B4', alpha=0.9)
             
-        ax_box.set_ylabel("Tổng quãng đường (km)")
-        ax_box.grid(True, linestyle='--', alpha=0.3)
-        
-        ax_box.tick_params(colors='#555555')
-        for spine in ax_box.spines.values():
-            spine.set_color('#CCCCCC')
+            ax_bar.set_xlabel("Lần chạy thứ")
+            ax_bar.set_ylabel("Tổng quãng đường (km)")
             
-        st.pyplot(fig_box)
+            if num_runs <= 20:
+                ax_bar.set_xticks(x)
+                ax_bar.set_xticklabels([f"{i+1}" for i in range(num_runs)])
+            else:
+                ax_bar.set_xticks([])
+            ax_bar.legend()
+            ax_bar.grid(True, linestyle='--', alpha=0.3)
+            
+            ax_bar.tick_params(colors='#555555')
+            for spine in ax_bar.spines.values():
+                spine.set_color('#CCCCCC')
+                
+            st.pyplot(fig_bar)
+            
+        with col_box:
+            st.markdown("#### 2. Biểu đồ phân phối (Boxplot)")
+            st.caption("Đánh giá độ ổn định (Hộp càng hẹp, dữ liệu càng ổn định)")
+            
+            fig_box, ax_box = plt.subplots(figsize=(6, 4))
+            
+            bplot = ax_box.boxplot([results_soa, results_misoa], 
+                                    labels=['SOA Gốc', 'MISOA'], 
+                                    patch_artist=True,
+                                    widths=0.5)
+            
+            colors = ['#FF4B4B', '#4682B4']
+            for patch, color in zip(bplot['boxes'], colors):
+                patch.set_facecolor(color)
+                patch.set_alpha(0.7)
+                
+            for median in bplot['medians']:
+                median.set_color('black')
+                median.set_linewidth(2)
+                
+            ax_box.set_ylabel("Tổng quãng đường (km)")
+            ax_box.grid(True, linestyle='--', alpha=0.3)
+            
+            ax_box.tick_params(colors='#555555')
+            for spine in ax_box.spines.values():
+                spine.set_color('#CCCCCC')
+                
+            st.pyplot(fig_box)
 else:
     st.info("👈 Hãy chọn chế độ và bấm 'Bắt đầu Tối Ưu Hóa' bên thanh công cụ!")
     st.markdown("### 🗺️ Bản đồ các trạm giao hàng hiện tại (Chưa tối ưu)")
