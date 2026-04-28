@@ -204,9 +204,22 @@ if __name__ == "__main__":
     plt.tight_layout()
     
     import os
-    os.makedirs('Output', exist_ok=True)
-    image_path = f'Output/Convergence_Curve_{fun_name}.png'
-    plt.savefig(image_path, dpi=300, bbox_inches='tight')
-    print(f"\n📸 Đã lưu biểu đồ thành công tại: {image_path}")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    folder_output = os.path.join(current_dir, '..', 'Output')
+    folder_plots = os.path.join(current_dir, 'results', 'plots')    
+    
+    os.makedirs(folder_output, exist_ok=True)
+    os.makedirs(folder_plots, exist_ok=True)
+    file_name = f'Convergence_Curve_{fun_name}.png'
+    
+    image_path_output = os.path.join(folder_output, file_name)
+    image_path_results = os.path.join(folder_plots, file_name)
+    
+    plt.savefig(image_path_output, dpi=300, bbox_inches='tight')
+    plt.savefig(image_path_results, dpi=300, bbox_inches='tight')
+    
+    print(f"\n📸 Đã lưu biểu đồ thành công tại:")
+    print(f"   - {image_path_output}")
+    print(f"   - {image_path_results}")
     
     plt.show()
