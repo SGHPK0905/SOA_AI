@@ -9,7 +9,8 @@ sys.path.append(parent_dir)
 
 import numpy as np
 import pandas as pd
-from main import soa, misoa, fun_info
+from main import soa, misoa
+from functions import fun_info
 
 def run_benchmark():
     runs = 30
